@@ -9,76 +9,36 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using static System.Net.WebRequestMethods;
 using Hotcakes.CommerceDTO.v1.Client;
+using System.Runtime.Remoting.Proxies;
+using Hotcakes.CommerceDTO.v1.Catalog;
+using Hotcakes.CommerceDTO.v1;
+using Hotcakes.Web;
 
 namespace Drivers_KliensAlkalamazas
 {
     public partial class Form1 : Form
     {
+        static string url = "http://20.234.113.211:8085";
+        static string key = "1-4a587ef4-be9b-4387-a1d7-e081245228a7";
+        static Api proxy = new Api(url, key);
+
         public Form1()
         {
             InitializeComponent();
+        }
 
-            Console.WriteLine("This is an API Sample Program for Hotcakes");
-            Console.WriteLine();
-
-            string url = "http://20.234.113.211:8085";
-            string key = "1-4a587ef4-be9b-4387-a1d7-e081245228a7";
-
-            Api proxy = new Api(url, key);
-
-            var s = proxy.CustomerAccountsCountOfAll().Content;
-            Console.WriteLine("Regisztrált userek: " + s.ToString());
-
-
-            var snaps = proxy.CategoriesFindAll();
-            if (snaps.Content != null)
-            {
-                Console.WriteLine("Found " + snaps.Content.Count + " categories");
-                Console.WriteLine("-- First 5 --");
-                for (var i = 0; i < 5; i++)
-                {
-                    if (i < snaps.Content.Count)
-                    {
-                        Console.WriteLine(i + ") " + snaps.Content[i].Name + " [" + snaps.Content[i].Bvin + "]");
-                        var cat = proxy.CategoriesFind(snaps.Content[i].Bvin);
-                        if (cat.Errors.Count > 0)
-                        {
-                            foreach (var err in cat.Errors)
-                            {
-                                Console.WriteLine("ERROR: " + err.Code + " " + err.Description);
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("By Bvin: " + cat.Content.Name + " | " + cat.Content.Description);
-                        }
-
-                        var catSlug = proxy.CategoriesFindBySlug(snaps.Content[i].RewriteUrl);
-                        if (catSlug.Errors.Count > 0)
-                        {
-                            foreach (var err in catSlug.Errors)
-                            {
-                                Console.WriteLine("ERROR: " + err.Code + " " + err.Description);
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("By Slug: " + cat.Content.Name + " | " + cat.Content.Description);
-                        }
-                    }
-                }
-            }
-            else
-            {
-                Console.WriteLine("Content is NULL!");
-
-            }
-
-            Console.WriteLine("Done");
+        private void Form1_Load(object sender, EventArgs e)
+        {
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
+            string bvin = "7c6f5649-23c5-4d2e-bb6d-edc969ad4b92";
+
+            var response = proxy.ProductInventoryFind(bvin);
+            //var response = proxy.ProductsFind(bvin);
+            Console.WriteLine(response.ObjectToJson());
 
         }
     }
