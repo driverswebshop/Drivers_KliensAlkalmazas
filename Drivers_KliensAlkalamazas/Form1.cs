@@ -21,10 +21,14 @@ namespace Drivers_KliensAlkalamazas
             Console.WriteLine("This is an API Sample Program for Hotcakes");
             Console.WriteLine();
 
-            var url = "http://http://20.234.113.211:8085//DesktopModules/Hotcakes/API/rest/v1/";
-            var key = "1-4a587ef4-be9b-4387-a1d7-e081245228a7";
+            string url = "http://20.234.113.211:8085";
+            string key = "1-4a587ef4-be9b-4387-a1d7-e081245228a7";
 
-            var proxy = new Api(url, key);
+            Api proxy = new Api(url, key);
+
+            var s = proxy.CustomerAccountsCountOfAll().Content;
+            Console.WriteLine("Regisztrált userek: " + s.ToString());
+
 
             var snaps = proxy.CategoriesFindAll();
             if (snaps.Content != null)
@@ -64,9 +68,13 @@ namespace Drivers_KliensAlkalamazas
                     }
                 }
             }
+            else
+            {
+                Console.WriteLine("Content is NULL!");
 
-            Console.WriteLine("Done - Press a key to continue");
-            Console.ReadKey();
+            }
+
+            Console.WriteLine("Done");
         }
 
         private void button1_Click(object sender, EventArgs e)
