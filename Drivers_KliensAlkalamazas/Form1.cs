@@ -31,14 +31,23 @@ namespace Drivers_KliensAlkalamazas
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            var response = proxy.ProductsFind("7C6F5649-23C5-4D2E-BB6D-EDC969AD4B92");
+            var response = proxy.ProductsFindAll();
 
             JObject joResponse = JObject.Parse(response.ObjectToJson());
-            JObject jObject = (JObject)joResponse["Content"];
-            //jObject.Remove("Bvin");
-            string bvin = jObject["Bvin"].ToString();
+            JArray jArray = (JArray)joResponse["Content"];
 
-            DataTable dataTable = (DataTable)JsonConvert.DeserializeObject(bvin, typeof(DataTable));
+            string[] keysToRemove = {"ProductTypeId", "CustomProperties", "ListPrice", "SitePriceOverrideText", "SiteCost", "MetaKeywords", "MetaDescription", "MetaTitle", "TaxExempt", "TaxSchedule", "ShippingDetails", "ShippingMode",  "Status",  "ImageFileSmall",  "ImageFileSmallAlternateText",  "ImageFileMediumAlternateText",  "MinimumQty",  "ShortDescription",  "LongDescription",  "ManufacturerId",  "VendorId",  "GiftWrapAllowed",  "GiftWrapPrice",  "Keywords",  "PreContentColumnId",  "PostContentColumnId",  "Featured",  "AllowReviews",  "Tabs", "IsSearchable", "ShippingCharge"};
+            foreach (JObject product in jArray)
+            {
+                foreach (var key in keysToRemove)
+                {
+                    product.Remove(key);
+                }
+            }
+
+            //Console.WriteLine(jArray.ToString());
+
+            DataTable dataTable = (DataTable)JsonConvert.DeserializeObject(jArray.ToString(), typeof(DataTable));
             dataGridView1.DataSource = dataTable;
         }
 
