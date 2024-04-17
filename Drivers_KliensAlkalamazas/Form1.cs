@@ -13,6 +13,8 @@ using System.Runtime.Remoting.Proxies;
 using Hotcakes.CommerceDTO.v1.Catalog;
 using Hotcakes.CommerceDTO.v1;
 using Hotcakes.Web;
+using Newtonsoft.Json.Linq;
+using Newtonsoft.Json;
 
 namespace Drivers_KliensAlkalamazas
 {
@@ -29,12 +31,20 @@ namespace Drivers_KliensAlkalamazas
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            
+            var response = proxy.ProductsFind("7C6F5649-23C5-4D2E-BB6D-EDC969AD4B92");
+
+            JObject joResponse = JObject.Parse(response.ObjectToJson());
+            JObject jObject = (JObject)joResponse["Content"];
+            //jObject.Remove("Bvin");
+            string bvin = jObject["Bvin"].ToString();
+
+            DataTable dataTable = (DataTable)JsonConvert.DeserializeObject(bvin, typeof(DataTable));
+            dataGridView1.DataSource = dataTable;
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            string bvin = "7c6f5649-23c5-4d2e-bb6d-edc969ad4b92";
+            string bvin = "b6dd2a96-81e3-4da7-998b-8eed2ba03759";
 
             var response = proxy.ProductInventoryFind(bvin);
             //var response = proxy.ProductsFind(bvin);
