@@ -42,6 +42,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.ValosTextBox = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
+            this.FilterBtn = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.groupBox2.SuspendLayout();
@@ -73,6 +74,7 @@
             this.dataGridView1.RowHeadersWidth = 82;
             this.dataGridView1.Size = new System.Drawing.Size(1170, 528);
             this.dataGridView1.TabIndex = 1;
+            this.dataGridView1.CellClick += new System.Windows.Forms.DataGridViewCellEventHandler(this.dataGridView1_CellClick);
             // 
             // SkuTextBox
             // 
@@ -83,7 +85,7 @@
             // 
             // NameTextBox
             // 
-            this.NameTextBox.Location = new System.Drawing.Point(44, 92);
+            this.NameTextBox.Location = new System.Drawing.Point(44, 69);
             this.NameTextBox.Name = "NameTextBox";
             this.NameTextBox.Size = new System.Drawing.Size(100, 20);
             this.NameTextBox.TabIndex = 3;
@@ -100,7 +102,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(8, 95);
+            this.label2.Location = new System.Drawing.Point(8, 72);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(30, 13);
             this.label2.TabIndex = 5;
@@ -117,6 +119,7 @@
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.FilterBtn);
             this.groupBox1.Controls.Add(this.SkuTextBox);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.NameTextBox);
@@ -178,6 +181,16 @@
             this.pictureBox1.TabIndex = 9;
             this.pictureBox1.TabStop = false;
             // 
+            // FilterBtn
+            // 
+            this.FilterBtn.Location = new System.Drawing.Point(71, 109);
+            this.FilterBtn.Name = "FilterBtn";
+            this.FilterBtn.Size = new System.Drawing.Size(75, 23);
+            this.FilterBtn.TabIndex = 6;
+            this.FilterBtn.Text = "Szűrés";
+            this.FilterBtn.UseVisualStyleBackColor = true;
+            this.FilterBtn.Click += new System.EventHandler(this.FilterBtn_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -216,6 +229,7 @@
         private System.Windows.Forms.TextBox ValosTextBox;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.PictureBox pictureBox1;
+        private System.Windows.Forms.Button FilterBtn;
     }
 }
 

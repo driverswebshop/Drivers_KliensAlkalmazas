@@ -15,6 +15,7 @@ using Hotcakes.CommerceDTO.v1;
 using Hotcakes.Web;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
+using System.IO;
 
 namespace Drivers_KliensAlkalamazas
 {
@@ -23,20 +24,44 @@ namespace Drivers_KliensAlkalamazas
         static string url = "http://20.234.113.211:8085";
         static string key = "1-4a587ef4-be9b-4387-a1d7-e081245228a7";
         static Api proxy = new Api(url, key);
+        static DataTable dataTable;
+        static string[] invId;
+        static string[] prodId;
+        static string selectedBvin = "";
 
         public Form1()
         {
+            ReadProdInv();
             InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
+        {
+            ListProd();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+
+            if (selectedBvin == "")
+            {
+                leltarTextBox.Text = "0";
+            }
+            else
+            {
+                GetInv(selectedBvin);
+            }
+
+        }
+
+        private void ListProd()
         {
             var response = proxy.ProductsFindAll();
 
             JObject joResponse = JObject.Parse(response.ObjectToJson());
             JArray jArray = (JArray)joResponse["Content"];
 
-            string[] keysToRemove = {"ProductTypeId", "CustomProperties", "ListPrice", "SitePriceOverrideText", "SiteCost", "MetaKeywords", "MetaDescription", "MetaTitle", "TaxExempt", "TaxSchedule", "ShippingDetails", "ShippingMode",  "Status",  "ImageFileSmall",  "ImageFileSmallAlternateText",  "ImageFileMediumAlternateText",  "MinimumQty",  "ShortDescription",  "LongDescription",  "ManufacturerId",  "VendorId",  "GiftWrapAllowed",  "GiftWrapPrice",  "Keywords",  "PreContentColumnId",  "PostContentColumnId",  "Featured",  "AllowReviews",  "Tabs", "IsSearchable", "ShippingCharge"};
+            string[] keysToRemove = { "ProductTypeId", "CustomProperties", "ListPrice", "SitePriceOverrideText", "SiteCost", "MetaKeywords", "MetaDescription", "MetaTitle", "TaxExempt", "TaxSchedule", "ShippingDetails", "ShippingMode", "Status", "ImageFileSmall", "ImageFileSmallAlternateText", "ImageFileMediumAlternateText", "MinimumQty", "ShortDescription", "LongDescription", "ManufacturerId", "VendorId", "GiftWrapAllowed", "GiftWrapPrice", "Keywords", "PreContentColumnId", "PostContentColumnId", "Featured", "AllowReviews", "Tabs", "IsSearchable", "ShippingCharge" };
             foreach (JObject product in jArray)
             {
                 foreach (var key in keysToRemove)
@@ -47,18 +72,83 @@ namespace Drivers_KliensAlkalamazas
 
             //Console.WriteLine(jArray.ToString());
 
-            DataTable dataTable = (DataTable)JsonConvert.DeserializeObject(jArray.ToString(), typeof(DataTable));
+            dataTable = (DataTable)JsonConvert.DeserializeObject(jArray.ToString(), typeof(DataTable));
             dataGridView1.DataSource = dataTable;
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        private int GetInv(string bvin)
         {
-            string bvin = "b6dd2a96-81e3-4da7-998b-8eed2ba03759";
+            string getInvId;
 
-            var response = proxy.ProductInventoryFind(bvin);
-            //var response = proxy.ProductsFind(bvin);
-            Console.WriteLine(response.ObjectToJson());
+            int index = Array.IndexOf(prodId, bvin);
+            if (index == -1)
+            {
+                getInvId = "";
+            }
+            else
+            {
+                getInvId = invId[index];
+            }
 
+            var response = proxy.ProductInventoryFind(getInvId);
+
+            JObject joResponse = JObject.Parse(response.ObjectToJson());
+            JToken jObject = joResponse["Content"];
+
+            Console.WriteLine(jObject.ToString());
+
+            return 0;
+            //dataTable = (DataTable)JsonConvert.DeserializeObject(jArray.ToString(), typeof(DataTable));
+            //dataGridView1.DataSource = dataTable;
+        }
+
+        private void FilterBtn_Click(object sender, EventArgs e)
+        {
+            string name = NameTextBox.Text;
+            string sku = SkuTextBox.Text;
+
+            DataView dv = dataTable.DefaultView;
+            dv.RowFilter = $"ProductName like '%{name}%' AND Sku like '%{sku}%'";
+            DataTable filteredTable = dv.ToTable();
+
+            dataGridView1.DataSource = filteredTable;
+        }
+
+        private void ReadProdInv()
+        {
+            string filePath = @"img\prod_inv.csv";
+
+            try
+            {
+                using (StreamReader reader = new StreamReader(filePath))
+                {
+                    string line;
+                    while ((line = reader.ReadLine()) != null)
+                    {
+                        string[] columns = line.Split(';');
+
+                        invId.Append(columns[0]);
+                        prodId.Append(columns[1]);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("Hiba a fájl olvasása közben: " + ex.Message);
+            }
+
+            Console.WriteLine(invId);
+            Console.WriteLine(prodId);
+        }
+
+        private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex >= 0)
+            {
+                DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
+
+                selectedBvin = row.Cells["Bvin"].Value.ToString();
+            }
         }
     }
 }
