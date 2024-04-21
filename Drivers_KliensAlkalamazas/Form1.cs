@@ -16,6 +16,7 @@ using Hotcakes.Web;
 using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.IO;
+using Hotcakes.Modules.Core.Admin.Content;
 
 namespace Drivers_KliensAlkalamazas
 {
@@ -25,18 +26,18 @@ namespace Drivers_KliensAlkalamazas
         static string key = "1-4a587ef4-be9b-4387-a1d7-e081245228a7";
         static Api proxy = new Api(url, key);
         static DataTable dataTable;
-        static string[] invId;
         static string[] prodId;
+        static string[] invId;
         static string selectedBvin = "";
 
         public Form1()
         {
-            ReadProdInv();
             InitializeComponent();
         }
 
         private void Form1_Load(object sender, EventArgs e)
         {
+            ReadProdInv();
             ListProd();
         }
 
@@ -49,7 +50,7 @@ namespace Drivers_KliensAlkalamazas
             }
             else
             {
-                GetInv(selectedBvin);
+                leltarTextBox.Text = GetInv(selectedBvin);
             }
 
         }
@@ -76,11 +77,12 @@ namespace Drivers_KliensAlkalamazas
             dataGridView1.DataSource = dataTable;
         }
 
-        private int GetInv(string bvin)
+        private string GetInv(string bvin)
         {
             string getInvId;
-
-            int index = Array.IndexOf(prodId, bvin);
+            
+            int index = Array.IndexOf(prodId, bvin.ToUpper());
+            
             if (index == -1)
             {
                 getInvId = "";
@@ -93,13 +95,9 @@ namespace Drivers_KliensAlkalamazas
             var response = proxy.ProductInventoryFind(getInvId);
 
             JObject joResponse = JObject.Parse(response.ObjectToJson());
-            JToken jObject = joResponse["Content"];
+            JToken jObject = joResponse["Content"];;
 
-            Console.WriteLine(jObject.ToString());
-
-            return 0;
-            //dataTable = (DataTable)JsonConvert.DeserializeObject(jArray.ToString(), typeof(DataTable));
-            //dataGridView1.DataSource = dataTable;
+            return jObject["QuantityOnHand"].ToString();
         }
 
         private void FilterBtn_Click(object sender, EventArgs e)
@@ -116,29 +114,24 @@ namespace Drivers_KliensAlkalamazas
 
         private void ReadProdInv()
         {
-            string filePath = @"img\prod_inv.csv";
+            string filePath = "prod_inv.csv";
+            List<string> invIdL = new List<string>();
+            List<string> prodIdL = new List<string>();
 
-            try
+            using (StreamReader reader = new StreamReader(filePath))
             {
-                using (StreamReader reader = new StreamReader(filePath))
+                string line;
+                while ((line = reader.ReadLine()) != null)
                 {
-                    string line;
-                    while ((line = reader.ReadLine()) != null)
-                    {
-                        string[] columns = line.Split(';');
+                    string[] columns = line.Split(';');
 
-                        invId.Append(columns[0]);
-                        prodId.Append(columns[1]);
-                    }
+                    invIdL.Add(columns[0]);
+                    prodIdL.Add(columns[1]);
                 }
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine("Hiba a fájl olvasása közben: " + ex.Message);
-            }
 
-            Console.WriteLine(invId);
-            Console.WriteLine(prodId);
+                prodId = prodIdL.ToArray();
+                invId = invIdL.ToArray();
+            }
         }
 
         private void dataGridView1_CellClick(object sender, DataGridViewCellEventArgs e)
