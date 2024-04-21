@@ -28,7 +28,7 @@ namespace Drivers_KliensAlkalamazas
         static DataTable dataTable;
         static string[] prodId;
         static string[] invId;
-        static string selectedBvin = "";
+        static string getInvId;
 
         public Form1()
         {
@@ -43,16 +43,16 @@ namespace Drivers_KliensAlkalamazas
 
         private void button1_Click(object sender, EventArgs e)
         {
+            var inventory = proxy.ProductInventoryFind(getInvId).Content;
 
-            if (selectedBvin == "")
+            if (int.TryParse(ValosTextBox.Text, out int invInt))
             {
-                leltarTextBox.Text = "0";
-            }
-            else
-            {
-                leltarTextBox.Text = GetInv(selectedBvin);
-            }
+                inventory.QuantityOnHand = invInt;
 
+                MessageBox.Show("Leltáradatok sikeresen frissítve!");
+            }
+            
+            ApiResponse<ProductInventoryDTO> response = proxy.ProductInventoryUpdate(inventory);
         }
 
         private void ListProd()
@@ -78,9 +78,7 @@ namespace Drivers_KliensAlkalamazas
         }
 
         private string GetInv(string bvin)
-        {
-            string getInvId;
-            
+        {   
             int index = Array.IndexOf(prodId, bvin.ToUpper());
             
             if (index == -1)
@@ -92,12 +90,9 @@ namespace Drivers_KliensAlkalamazas
                 getInvId = invId[index];
             }
 
-            var response = proxy.ProductInventoryFind(getInvId);
+            var response = proxy.ProductInventoryFind(getInvId).Content;
 
-            JObject joResponse = JObject.Parse(response.ObjectToJson());
-            JToken jObject = joResponse["Content"];;
-
-            return jObject["QuantityOnHand"].ToString();
+            return response.QuantityOnHand.ToString();
         }
 
         private void FilterBtn_Click(object sender, EventArgs e)
@@ -140,7 +135,9 @@ namespace Drivers_KliensAlkalamazas
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                selectedBvin = row.Cells["Bvin"].Value.ToString();
+                string selectedBvin = row.Cells["Bvin"].Value.ToString();
+
+                leltarTextBox.Text = GetInv(selectedBvin);
             }
         }
     }
