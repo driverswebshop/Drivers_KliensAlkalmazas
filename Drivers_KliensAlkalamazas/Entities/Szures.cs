@@ -6,8 +6,9 @@ using System.Threading.Tasks;
 
 namespace Drivers_KliensAlkalamazas.Entities
 {
-    public class SKU
+    public class Szures
     {
-
+        public string sku { get; set; }
+        //public string szurt { get; set; }
     }
 }
