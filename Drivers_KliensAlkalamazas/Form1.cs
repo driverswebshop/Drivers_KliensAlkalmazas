@@ -59,8 +59,17 @@ namespace Drivers_KliensAlkalamazas
         {
             var response = proxy.ProductsFindAll();
 
-            JObject joResponse = JObject.Parse(response.ObjectToJson());
-            JArray jArray = (JArray)joResponse["Content"];
+            JArray jArray = new JArray();
+            try
+            {
+                JObject joResponse = JObject.Parse(response.ObjectToJson());
+                jArray = (JArray)joResponse["Content"];
+            }
+            catch (Exception err)
+            {
+                Console.WriteLine("Hiba a termékek lekérdezése közben: " + err);
+            }
+            
 
             string[] keysToRemove = { "ProductTypeId", "CustomProperties", "ListPrice", "SitePriceOverrideText", "SiteCost", "MetaKeywords", "MetaDescription", "MetaTitle", "TaxExempt", "TaxSchedule", "ShippingDetails", "ShippingMode", "Status", "ImageFileSmall", "ImageFileSmallAlternateText", "ImageFileMediumAlternateText", "MinimumQty", "ShortDescription", "LongDescription", "ManufacturerId", "VendorId", "GiftWrapAllowed", "GiftWrapPrice", "Keywords", "PreContentColumnId", "PostContentColumnId", "Featured", "AllowReviews", "Tabs", "IsSearchable", "ShippingCharge" };
             foreach (JObject product in jArray)
