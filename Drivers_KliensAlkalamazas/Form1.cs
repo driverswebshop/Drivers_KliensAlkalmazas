@@ -29,6 +29,7 @@ namespace Drivers_KliensAlkalamazas
         static string[] prodId;
         static string[] invId;
         static string getInvId;
+        static string selectedBvin = "";
 
         public Form1()
         {
@@ -48,11 +49,18 @@ namespace Drivers_KliensAlkalamazas
             if (int.TryParse(ValosTextBox.Text, out int invInt))
             {
                 inventory.QuantityOnHand = invInt;
+                ApiResponse<ProductInventoryDTO> response = proxy.ProductInventoryUpdate(inventory);
 
+                leltarTextBox.Text = GetInv(selectedBvin);
+                
                 MessageBox.Show("Leltáradatok sikeresen frissítve!");
             }
-            
-            ApiResponse<ProductInventoryDTO> response = proxy.ProductInventoryUpdate(inventory);
+            else
+            {
+                MessageBox.Show("Kérem számot adjon meg!");
+            }
+
+            ValosTextBox.Text = "";
         }
 
         private void ListProd()
@@ -144,7 +152,7 @@ namespace Drivers_KliensAlkalamazas
             {
                 DataGridViewRow row = dataGridView1.Rows[e.RowIndex];
 
-                string selectedBvin = row.Cells["Bvin"].Value.ToString();
+                selectedBvin = row.Cells["Bvin"].Value.ToString();
 
                 leltarTextBox.Text = GetInv(selectedBvin);
             }
