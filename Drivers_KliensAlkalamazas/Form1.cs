@@ -26,6 +26,7 @@ namespace Drivers_KliensAlkalamazas
     public partial class Form1 : Form
     {
         private SzuresController _controller = new SzuresController();
+        private LeltarController _lcontroller = new LeltarController();
 
 
         static string url = "http://20.234.113.211:8085";
@@ -54,6 +55,7 @@ namespace Drivers_KliensAlkalamazas
 
             if (int.TryParse(ValosTextBox.Text, out int invInt))
             {
+                _lcontroller.Validalas(ValosTextBox.Text);
                 inventory.QuantityOnHand = invInt;
                 ApiResponse<ProductInventoryDTO> response = proxy.ProductInventoryUpdate(inventory);
 

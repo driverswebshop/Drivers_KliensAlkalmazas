@@ -33,4 +33,27 @@ namespace UnitTestProject.Test
             Assert.AreEqual(expectedResult, actualResult);
         }
     }
+
+    public class LeltarTeszt
+    {
+        [
+            Test,
+            TestCase("42",true),
+            TestCase("56783",false), //5 jegyű
+            TestCase("egy", false), //szám
+            TestCase("5", true),
+            TestCase("tizen1", false)
+            ]
+        public void LeltarValidator(string szam, bool expectedResult)
+        {
+            //Arrange
+            var leltarController = new LeltarController();
+
+            //Act
+            var actualResult = leltarController.SzamValidator(szam);
+
+            //Assert
+            Assert.AreEqual(expectedResult, actualResult);
+        }
+    }
 }

@@ -121,8 +121,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Abstractions\ILeltarManager.cs" />
     <Compile Include="Abstractions\ISzuresManager.cs" />
+    <Compile Include="Controllers\LeltarController.cs" />
     <Compile Include="Controllers\SzuresController.cs" />
+    <Compile Include="Entities\Leltar.cs" />
     <Compile Include="Entities\Szures.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
@@ -132,6 +135,7 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Services\LeltarManager.cs" />
     <Compile Include="Services\SzuresManager.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
