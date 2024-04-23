@@ -17,11 +17,18 @@ using Newtonsoft.Json.Linq;
 using Newtonsoft.Json;
 using System.IO;
 using Hotcakes.Modules.Core.Admin.Content;
+using Drivers_KliensAlkalamazas.Abstractions;
+using Drivers_KliensAlkalamazas.Services;
+using Drivers_KliensAlkalamazas.Controllers;
 
 namespace Drivers_KliensAlkalamazas
 {
     public partial class Form1 : Form
     {
+        private SzuresController _controller = new SzuresController();
+        private LeltarController _lcontroller = new LeltarController();
+
+
         static string url = "http://20.234.113.211:8085";
         static string key = "1-4a587ef4-be9b-4387-a1d7-e081245228a7";
         static Api proxy = new Api(url, key);
@@ -45,19 +52,20 @@ namespace Drivers_KliensAlkalamazas
         private void button1_Click(object sender, EventArgs e)
         {
             var inventory = proxy.ProductInventoryFind(getInvId).Content;
-
-            if (int.TryParse(ValosTextBox.Text, out int invInt))
+            try
             {
-                inventory.QuantityOnHand = invInt;
+                int valos=_lcontroller.Validalas(ValosTextBox.Text);
+                inventory.QuantityOnHand = valos;
                 ApiResponse<ProductInventoryDTO> response = proxy.ProductInventoryUpdate(inventory);
 
+
                 leltarTextBox.Text = GetInv(selectedBvin);
-                
+
                 MessageBox.Show("Leltáradatok sikeresen frissítve!");
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Kérem számot adjon meg!");
+                MessageBox.Show(ex.Message);
             }
 
             ValosTextBox.Text = "";
@@ -114,14 +122,25 @@ namespace Drivers_KliensAlkalamazas
 
         private void FilterBtn_Click(object sender, EventArgs e)
         {
-            string name = NameTextBox.Text;
-            string sku = SkuTextBox.Text;
+            try
+            {
+                string name = NameTextBox.Text;
+                string sku = SkuTextBox.Text;
 
-            DataView dv = dataTable.DefaultView;
-            dv.RowFilter = $"ProductName like '%{name}%' AND Sku like '%{sku}%'";
-            DataTable filteredTable = dv.ToTable();
+                _controller.Validalas(sku);
 
-            dataGridView1.DataSource = filteredTable;
+                DataView dv = dataTable.DefaultView;
+                dv.RowFilter = $"ProductName like '%{name}%' AND Sku like '%{sku}%'";
+                DataTable filteredTable = dv.ToTable();
+
+                dataGridView1.DataSource = filteredTable;
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
+            
+
         }
 
         private void ReadProdInv()
