@@ -23,7 +23,7 @@ namespace Drivers_KliensAlkalamazas.Controllers
         {
             if (!SzamValidator(szam))
             {
-                throw new ValidationException("Nem számot adtál meg, vagy 4 számjegynál több!");
+                throw new ValidationException("Nem számot adtál meg, vagy 4 számjegynél több!");
             }
             return Convert.ToInt32(szam);
         }

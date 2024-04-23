@@ -25,7 +25,7 @@ namespace Drivers_KliensAlkalamazas.Controllers
         {
             if (!SzuresValidator(szures))
             {
-                throw new ValidationException("A megadott SKU nem megfelelő\n A megfelelő kód G/T-vel kezdődik és 7 szám követi.");
+                throw new ValidationException("A megadott SKU nem megfelelő\nA megfelelő kód G/T-vel kezdődik és 7 szám követi.");
             }
 
             return szures;

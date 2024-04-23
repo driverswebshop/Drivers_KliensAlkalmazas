@@ -51,21 +51,24 @@ namespace Drivers_KliensAlkalamazas
 
         private void button1_Click(object sender, EventArgs e)
         {
+            Console.WriteLine("macilaci");
             var inventory = proxy.ProductInventoryFind(getInvId).Content;
-
-            if (int.TryParse(ValosTextBox.Text, out int invInt))
+            Console.WriteLine(inventory);
+            try
             {
-                _lcontroller.Validalas(ValosTextBox.Text);
-                inventory.QuantityOnHand = invInt;
+                int valos=_lcontroller.Validalas(ValosTextBox.Text);
+                inventory.QuantityOnHand = valos;
                 ApiResponse<ProductInventoryDTO> response = proxy.ProductInventoryUpdate(inventory);
 
+                Console.WriteLine(response);
+
                 leltarTextBox.Text = GetInv(selectedBvin);
-                
+
                 MessageBox.Show("Leltáradatok sikeresen frissítve!");
             }
-            else
+            catch (Exception ex)
             {
-                MessageBox.Show("Kérem számot adjon meg!");
+                MessageBox.Show(ex.Message);
             }
 
             ValosTextBox.Text = "";
