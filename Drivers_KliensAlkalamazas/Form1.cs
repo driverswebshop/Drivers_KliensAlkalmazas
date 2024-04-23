@@ -51,16 +51,13 @@ namespace Drivers_KliensAlkalamazas
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Console.WriteLine("macilaci");
             var inventory = proxy.ProductInventoryFind(getInvId).Content;
-            Console.WriteLine(inventory);
             try
             {
                 int valos=_lcontroller.Validalas(ValosTextBox.Text);
                 inventory.QuantityOnHand = valos;
                 ApiResponse<ProductInventoryDTO> response = proxy.ProductInventoryUpdate(inventory);
 
-                Console.WriteLine(response);
 
                 leltarTextBox.Text = GetInv(selectedBvin);
 
